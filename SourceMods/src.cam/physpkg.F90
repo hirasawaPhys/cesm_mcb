@@ -2239,7 +2239,7 @@ contains
 
    endif
 
-   call set_cdnc(state, ptend, pbuf, 375.e6_r8, 375.e6_r8, 375.e6_r8)
+   call set_cdnc(state, ptend, pbuf, cam_in%ocnfrac, 375.e6_r8, 375.e6_r8, 375.e6_r8)
    !!!! put in state vector changes here - haruki
    ! k700 = minloc(abs(state%pmid(0,ptend%top_level:pver) - 7.e4_r8), 1)
    !call cnst_get_ind('NUMLIQ', ixnumliq, abort=.false.)

@@ -9,23 +9,25 @@ module fix_cdnc
 
     public set_cdnc
 
-subroutine set_cdnc(state, ptend, pbuf, nc_reg1, nc_reg2, nc_reg3)
+subroutine set_cdnc(state, ptend, pbuf, ocnfrac, nc_reg1, nc_reg2, nc_reg3)
 
    use constituents,     only: cnst_get_ind
    use physics_buffer,   only: pbuf_old_tim_idx, pbuf_get_index
    use ppgrid,           only: pcols, pver
 
-   type(physics_buffer_desc), pointer :: pbuf(:)
-   type(physics_state) :: state
-   type(physics_ptend) :: ptend
-   real(r8)            :: nc_reg1 ! CDNC target for region 1 (NEPac)
-   real(r8)            :: nc_reg2 ! CDNC target for region 2 (SEPac)
-   real(r8)            :: nc_reg3 ! CDNC target for region 3 (SEAtl)
+   type(physics_buffer_desc), pointer  :: pbuf(:)
+   type(physics_state), intent(inout)  :: state
+   type(physics_ptend), intent(in)     :: ptend
+   real(r8),            intent(in)     :: ocnfrac(pcols)    ! Land fraction
+   real(r8),            intent(in)     :: nc_reg1 ! CDNC target for region 1 (NEPac)
+   real(r8),            intent(in)     :: nc_reg2 ! CDNC target for region 2 (SEPac)
+   real(r8),            intent(in)     :: nc_reg3 ! CDNC target for region 3 (SEAtl)
+
    integer             :: ixnumliq
    integer             :: itim_old
    integer             :: alst_idx = -1
-   real(r8), pointer, dimension(:,:) :: alst        ! cloud fraction
    integer             :: i, k, ncol
+   real(r8), pointer, dimension(:,:) :: alst        ! cloud fraction
 
    ncol  = state%ncol
 
@@ -41,7 +43,7 @@ subroutine set_cdnc(state, ptend, pbuf, nc_reg1, nc_reg2, nc_reg3)
          state%lon(i) > 3.665191_r8 .and. state%lon(i) < 4.363323_r8) then
             write(iulog,*) 'testing region 1 def lat=',state%lat(i), ', lon=',state%lon(i)
             do k = ptend%top_level, ptend%bot_level
-               state%q(i,k,ixnumliq) = nc_reg1 * alst(i,k)
+               state%q(i,k,ixnumliq) = nc_reg1 * alst(i,k) * ocnfrac(i)
             end do
       end if
 
@@ -50,7 +52,7 @@ subroutine set_cdnc(state, ptend, pbuf, nc_reg1, nc_reg2, nc_reg3)
          state%lon(i) < 5.061455_r8 .and. state%lon(i) > 4.363323_r8) then
             write(iulog,*) 'testing region 2 def lat=',state%lat(i), ', lon=',state%lon(i)
             do k = ptend%top_level, ptend%bot_level
-               state%q(i,k,ixnumliq) = nc_reg2 * alst(i,k)
+               state%q(i,k,ixnumliq) = nc_reg2 * alst(i,k) * ocnfrac(i)
             end do
       end if
 
@@ -67,12 +69,13 @@ subroutine set_cdnc(state, ptend, pbuf, nc_reg1, nc_reg2, nc_reg3)
          state%lon(i) < 0.261799_r8) then
             write(iulog,*) 'testing region 3 def lat=',state%lat(i), ', lon=',state%lon(i)
             do k = ptend%top_level, ptend%bot_level
-               state%q(i,k,ixnumliq) = nc_reg3 * alst(i,k)
+               state%q(i,k,ixnumliq) = nc_reg3 * alst(i,k) * ocnfrac(i)
             end do
       end if
 
    end do
 
 end subroutine set_cdnc
+
 
 end module fix_cdnc
