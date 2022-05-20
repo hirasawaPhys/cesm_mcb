@@ -227,6 +227,7 @@ contains
     integer :: ixnumsnow, ixnumrain
     integer :: ncol                                ! number of columns
     integer :: ixh, ixh2    ! constituent indices for H, H2
+    integer :: k700
 
     real(r8) :: zvirv(state%psetcols,pver)  ! Local zvir array pointer
 
@@ -327,6 +328,10 @@ contains
     call cnst_get_ind('NUMRAI', ixnumrain, abort=.false.)
     call cnst_get_ind('NUMSNO', ixnumsnow, abort=.false.)
 
+    ! write(iulog,*) 'testing region def lat=',state%lat(0), ', lon=',state%lon(0)
+    ! gets pressure level for 700hPa (should move this to init at some point)
+    ! For now assume its the same for all columns
+    k700 = minloc(abs(state%pmid(0,ptend%top_level:pver) - 7.e4_r8), 1)
     do m = 1, pcnst
        if(ptend%lq(m)) then
           do k = ptend%top_level, ptend%bot_level
@@ -345,6 +350,34 @@ contains
                 state%q(:ncol,k,m) = min(1.e10_r8,state%q(:ncol,k,m))
              end do
           end if
+
+          !!! Constant CCN values
+          ! attempt to fix state in a defined box
+          ! Singh et al
+          if(m == ixnumliq) then
+             do i = 1, ncol
+               !if(state%lat(i) > 0.436332_r8 .and. state%lat(i) < 0.698132_r8 .and. state%lon(i) > 3.839724_r8 .and. state%lon(i) < 4.188790_r8) then
+               if(state%lat(i) > 0._r8 .and. state%lat(i) < 0.523599_r8 .and. state%lon(i) > 3.665191_r8 .and. state%lon(i) < 4.363323_r8) then
+                  write(iulog,*) 'testing region def lat=',state%lat(i), ', lon=',state%lon(i)
+                  ! Find vertical level nearest 700 mb.
+                  do k = k700, ptend%bot_level
+                        state%q(i,k,m) = 100.e6_r8 ! sets the grid box average CDNC - should change to 
+                                                   ! cloud average CDNC (divide grid box avg by cloud 
+                                                   ! fraction)
+                  end do
+               end if
+             end do
+          end if
+          !if(m == ixnumice) then
+          !   do1 i = 1, ncol
+          !     if(state%lat(i) > 0.436332_r8 .and. state%lat(i) < 0.698132_r8 .and. state%lon(i) > 3.839724_r8 .and. state%lon(i) < 4.188790_r8) then
+          !        do k = k700, ptend%bot_level
+          !              state%q(i,k,m) = 0.1e6_r8
+          !        end do
+          !     end if
+          !   end do
+          !end if
+          !!! end of modifications
 
        end if
 
