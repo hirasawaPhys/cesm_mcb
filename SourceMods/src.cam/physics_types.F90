@@ -354,20 +354,20 @@ contains
           !!! Constant CCN values
           ! attempt to fix state in a defined box
           ! Singh et al
-          if(m == ixnumliq) then
-             do i = 1, ncol
-               !if(state%lat(i) > 0.436332_r8 .and. state%lat(i) < 0.698132_r8 .and. state%lon(i) > 3.839724_r8 .and. state%lon(i) < 4.188790_r8) then
-               if(state%lat(i) > 0._r8 .and. state%lat(i) < 0.523599_r8 .and. state%lon(i) > 3.665191_r8 .and. state%lon(i) < 4.363323_r8) then
-                  write(iulog,*) 'testing region def lat=',state%lat(i), ', lon=',state%lon(i)
-                  ! Find vertical level nearest 700 mb.
-                  do k = k700, ptend%bot_level
-                        state%q(i,k,m) = 100.e6_r8 ! sets the grid box average CDNC - should change to 
-                                                   ! cloud average CDNC (divide grid box avg by cloud 
-                                                   ! fraction)
-                  end do
-               end if
-             end do
-          end if
+          !if(m == ixnumliq) then
+          !   do i = 1, ncol
+          !     !if(state%lat(i) > 0.436332_r8 .and. state%lat(i) < 0.698132_r8 .and. state%lon(i) > 3.839724_r8 .and. state%lon(i) < 4.188790_r8) then
+          !     if(state%lat(i) > 0._r8 .and. state%lat(i) < 0.523599_r8 .and. state%lon(i) > 3.665191_r8 .and. state%lon(i) < 4.363323_r8) then
+          !        write(iulog,*) 'testing region def lat=',state%lat(i), ', lon=',state%lon(i)
+          !        ! Find vertical level nearest 700 mb.
+          !        do k = k700, ptend%bot_level
+          !              state%q(i,k,m) = 100.e6_r8 ! sets the grid box average CDNC - should change to 
+          !                                         ! cloud average CDNC (divide grid box avg by cloud 
+          !                                         ! fraction)
+          !        end do
+          !     end if
+          !   end do
+          !end if
           !if(m == ixnumice) then
           !   do1 i = 1, ncol
           !     if(state%lat(i) > 0.436332_r8 .and. state%lat(i) < 0.698132_r8 .and. state%lon(i) > 3.839724_r8 .and. state%lon(i) < 4.188790_r8) then
