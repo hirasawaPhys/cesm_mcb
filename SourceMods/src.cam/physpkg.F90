@@ -34,7 +34,7 @@ module physpkg
 
   use modal_aero_calcsize,    only: modal_aero_calcsize_init, modal_aero_calcsize_diag, modal_aero_calcsize_reg
   use modal_aero_wateruptake, only: modal_aero_wateruptake_init, modal_aero_wateruptake_dr, modal_aero_wateruptake_reg
-
+ 
   implicit none
   private
   save
@@ -1665,7 +1665,7 @@ contains
 
     use dadadj_cam,      only: dadadj_tend
     use rk_stratiform,   only: rk_stratiform_tend
-    use microp_driver,   only: microp_driver_tend
+    use microp_driver,   only: microp_driver_tend, set_cdnc
     use microp_aero,     only: microp_aero_run
     use macrop_driver,   only: macrop_driver_tend
     use physics_types,   only: physics_state, physics_tend, physics_ptend, &
@@ -1697,7 +1697,6 @@ contains
     use subcol,          only: subcol_gen, subcol_ptend_avg
     use subcol_utils,    only: subcol_ptend_copy, is_subcol_on
     use qneg_module,     only: qneg3
-    use fix_cdnc,        only: set_cdnc ! subroutine for setting CDNC
 
     ! Arguments
 
@@ -2240,7 +2239,7 @@ contains
 
    endif
 
-   call set_cdnc(state, ptend, 150.e6_r8, 150.e6_r8, 150.e6_r8)
+   call set_cdnc(state, ptend, pbuf, 375.e6_r8, 375.e6_r8, 375.e6_r8)
    !!!! put in state vector changes here - haruki
    ! k700 = minloc(abs(state%pmid(0,ptend%top_level:pver) - 7.e4_r8), 1)
    !call cnst_get_ind('NUMLIQ', ixnumliq, abort=.false.)
