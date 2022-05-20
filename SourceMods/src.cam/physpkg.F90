@@ -2241,16 +2241,15 @@ contains
 
    !!!! put in state vector changes here - haruki
    ! k700 = minloc(abs(state%pmid(0,ptend%top_level:pver) - 7.e4_r8), 1)
-   if(m == ixnumliq) then
-      do i = 1, ncol
-        if(state%lat(i) > 0._r8 .and. state%lat(i) < 0.523599_r8 .and. state%lon(i) > 3.665191_r8 .and. state%lon(i) < 4.363323_r8) then
-           write(iulog,*) 'testing region def lat=',state%lat(i), ', lon=',state%lon(i)
-           do k = ptend%top_level, ptend%bot_level
-                 state%q(i,k,m) = 100.e6_r8 * cld(i,k)
-           end do
-        end if
-      end do
-   end if
+   call cnst_get_ind('NUMLIQ', ixnumliq, abort=.false.)
+   do i = 1, ncol
+      if(state%lat(i) > 0._r8 .and. state%lat(i) < 0.523599_r8 .and. state%lon(i) > 3.665191_r8 .and. state%lon(i) < 4.363323_r8) then
+         write(iulog,*) 'testing region def lat=',state%lat(i), ', lon=',state%lon(i)
+         do k = ptend%top_level, ptend%bot_level
+               state%q(i,k,ixnumliq) = 100.e6_r8 * cld(i,k)
+         end do
+      end if
+   end do
    !!!! 
 
     !===================================================
