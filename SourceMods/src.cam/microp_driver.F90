@@ -232,41 +232,41 @@ subroutine set_cdnc(state, ptend, pbuf, ocnfrac, nc_reg1, nc_reg2, nc_reg3)
    do i = 1, ncol  
       !! North East Pacific [0, 30N], [110W, 150W]
       if(state%lat(i) > 0._r8 .and. state%lat(i) < 0.523599_r8 .and. &
-         state%lon(i) > 3.665191_r8 .and. state%lon(i) < 4.363323_r8) then
+         state%lon(i) > 3.665191_r8 .and. state%lon(i) < 4.363323_r8 .and. ocnfrac(i) > 0) then
             ! debug write, remove later
             write(iulog,*) 'testing region 1 def lat=',state%lat(i), ', lon=',state%lon(i)
             ! modify over the entire column
             do k = ptend%top_level, ptend%bot_level
                ! q(i,k,ixnumliq) is the grid box average value, so we need to multiply 
                !  by the liquid cloud fraction (alst)
-               state%q(i,k,ixnumliq) = nc_reg1 * alst(i,k) * ocnfrac(i)
+               state%q(i,k,ixnumliq) = nc_reg1 * alst(i,k) * ocnfrac(i) + state%q(i,k,ixnumliq) * (1 - ocnfrac(i))
             end do
       end if
 
       !! South East Pacific [30S, 0], [70W, 110W]
       if(state%lat(i) < 0._r8 .and. state%lat(i) > -0.523599_r8 .and. &
-         state%lon(i) < 5.061455_r8 .and. state%lon(i) > 4.363323_r8) then
+         state%lon(i) < 5.061455_r8 .and. state%lon(i) > 4.363323_r8 .and. ocnfrac(i) > 0) then
             write(iulog,*) 'testing region 2 def lat=',state%lat(i), ', lon=',state%lon(i)
             do k = ptend%top_level, ptend%bot_level
-               state%q(i,k,ixnumliq) = nc_reg2 * alst(i,k) * ocnfrac(i)
+               state%q(i,k,ixnumliq) = nc_reg2 * alst(i,k) * ocnfrac(i) + state%q(i,k,ixnumliq) * (1 - ocnfrac(i))
             end do
       end if
 
       !! South East Atlantic [30S, 0], [15E, 25W]
       ! East of 25W
       if(state%lat(i) < 0._r8 .and. state%lat(i) > -0.523599_r8 .and. &
-         state%lon(i) > 5.846853_r8) then
+         state%lon(i) > 5.846853_r8 .and. ocnfrac(i) > 0) then
             write(iulog,*) 'testing region 3 def lat=',state%lat(i), ', lon=',state%lon(i)
             do k = ptend%top_level, ptend%bot_level
-               state%q(i,k,ixnumliq) = nc_reg3 * alst(i,k)
+               state%q(i,k,ixnumliq) = nc_reg3 * alst(i,k) * ocnfrac(i) + state%q(i,k,ixnumliq) * (1 - ocnfrac(i))
             end do
       end if
       ! note need to split because we're spanning over the 0 meridian - this is for west of 15E
       if(state%lat(i) < 0._r8 .and. state%lat(i) > -0.523599_r8 .and. &
-         state%lon(i) < 0.261799_r8) then
+         state%lon(i) < 0.261799_r8 .and. ocnfrac(i) > 0) then
             write(iulog,*) 'testing region 3 def lat=',state%lat(i), ', lon=',state%lon(i)
             do k = ptend%top_level, ptend%bot_level
-               state%q(i,k,ixnumliq) = nc_reg3 * alst(i,k) * ocnfrac(i)
+               state%q(i,k,ixnumliq) = nc_reg3 * alst(i,k) * ocnfrac(i) + state%q(i,k,ixnumliq) * (1 - ocnfrac(i))
             end do
       end if
 
